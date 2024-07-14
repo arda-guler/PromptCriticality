@@ -6,6 +6,7 @@ import tkinter as tk
 _PI = np.pi
 _2PI = 2 * _PI
 
+## === SETUP ===
 init_particle_count = 80
 init_particle_min_spacing = 6
 enrichment = 0.8
@@ -19,6 +20,7 @@ casing_strength = 40
 neutron_speed = 25
 neutron_lifetime = 5
 reaction_pressure_ratio = 5000
+## === SETUP ===
 
 neutrons = []
 particles = []
