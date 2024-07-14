@@ -7,19 +7,20 @@ _PI = np.pi
 _2PI = 2 * _PI
 
 ## === SETUP ===
-init_particle_count = 80
+init_particle_count = 100
 init_particle_min_spacing = 6
-enrichment = 0.8
+enrichment = 0.85
 particle_drag_factor = 5e-2
 
 enable_casing = True
-casing_radius = 150
-casing_reflectance = 0.5
+casing_radius = 80
+casing_reflectance = 0.8
 casing_strength = 40
 
 neutron_speed = 25
 neutron_lifetime = 5
-reaction_pressure_ratio = 5000
+reaction_pressure_ratio = 3000
+scatter_percent = 0.4
 ## === SETUP ===
 
 neutrons = []
@@ -71,21 +72,27 @@ class Neutron:
                 
                 if random.uniform(0, 1) < casing_reflectance:
                     self.pos = self.pos / pos_mag * casing_radius
-                    self.vel = -self.pos / pos_mag * np.linalg.norm(self.vel) * 0.3
+                    self.vel = -self.pos / pos_mag * np.linalg.norm(self.vel) * 0.9
 
                 else:
                     pass
             
 
     def check_collision(self):
-        global particles
+        global particles, neutrons
         
         for p in particles:
             if not p.active:
                 continue
             
             if np.linalg.norm(p.pos - self.pos) < p.radius:
-                p.react(self)
+                if random.uniform(0, 1) < scatter_percent:
+                    p.react(self)
+
+                else:
+                    neutrons.remove(self)
+                    del self
+                    
                 return True
 
             # removal of neutron from the simulation is handled by Radioactive.react()
@@ -345,8 +352,8 @@ def main():
 
         for n in neutrons:
             cvs_pos = space2canvas(n.pos[0], n.pos[1])
-            canvas.create_oval(cvs_pos[0]-3, cvs_pos[1]-3,
-                               cvs_pos[0]+3, cvs_pos[1]+3,
+            canvas.create_oval(cvs_pos[0]-2, cvs_pos[1]-2,
+                               cvs_pos[0]+2, cvs_pos[1]+2,
                                fill="magenta")
 
         root.update()
